@@ -1,13 +1,17 @@
+// require needed packages
 const { Mode, DataTypes } = require('sequelize');
 const bcrypt = require('bcrypt');
 const sequelize = require('../config/connection');
 
+// creating a User class based on the Model
+// checking that the login password and the 'assigned' password are the same
 class User extends Model {
     checkPassword(loginPassword) {
         return bcrypt.compareSync(loginPassword, this.password);
     }
 }
 
+// creating the user class with a id, username, email, and password
 User.init(
     {
         id: {
@@ -34,6 +38,7 @@ User.init(
         },
     },
     {
+        // hashing the data for security purposes 
         hooks: {
             beforeCreate: async (newUserData) => {
                 newUserData.password = await bcrypt.hash(newUserData.password, 10);
@@ -44,6 +49,7 @@ User.init(
                 return updatedUserData;
             },
         },
+        // sequelizing the data
         sequelize,
         timestamps: false,
         freezeTableName: true,
